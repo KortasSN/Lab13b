@@ -3,6 +3,11 @@ package com.josh;
 import java.sql.*;
 import java.util.Scanner;
 
+//create database in mySQL shell
+//create table cubes (cube_solver varchar(50), time_seconds float);
+
+
+
 public class Main {
 
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
