@@ -1,5 +1,6 @@
 package com.josh;
 
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -35,19 +36,30 @@ static Statement statement;
 //        String solver2 = "INSERT INTO cubes2 VALUES ('Fakhri Raihaan (using his feet)', 27.93)";
 //        statement.executeUpdate(solver2);
 
-        statement.execute("INSERT INTO cubes VALUES ('Fakhri Raihaan (using his feet)', 27.93)");
+        statement.execute("INSERT INTO cubes VALUES ('Fakhri Raihaan', 27.93)");
 //        String solver3 = "INSERT INTO cubes2 VALUES ('Ruxin Liu (age 3)', 99.33)";
 //        statement.executeUpdate(solver3);
 
-        statement.execute("INSERT INTO cubes VALUES ('Ruxin Liu (age 3)', 99.33)");
+        statement.execute("INSERT INTO cubes VALUES ('Ruxin Liu', 99.33)");
 //        String solver4 = "INSERT INTO cubes2 VALUES ('Mats Valk (human record holder)', 6.27)";
 //        statement.executeUpdate(solver4);
 
-        statement.execute("INSERT INTO cubes VALUES ('Mats Valk (human record holder)', 6.27)");
+        statement.execute("INSERT INTO cubes VALUES ('Mats Valk', 6.27)");
 
-        addTime();
 
-        displayTimes();
+        System.out.println("1. Add Time");
+        System.out.println("2. Display Times");
+        System.out.println("3. Change Time");
+        Scanner inputScanner = new Scanner(System.in);
+        int input = inputScanner.nextInt();
+        if (input == 1) {
+            addTime();}
+        if (input == 2) {
+            displayTimes();}
+        if (input == 3) {
+            changeTime();
+        }
+
 
         try {
             if (statement != null) statement.close();
@@ -64,6 +76,36 @@ static Statement statement;
         //TO DO add try/catch for all
 
     }
+
+    private static void changeTime() throws SQLException {
+        System.out.println("Enter name:");
+        Scanner searchScanner = new Scanner(System.in);
+        String searchName = searchScanner.nextLine();
+        System.out.println("Enter new time:");
+        Scanner newtimeScanner = new Scanner(System.in);
+        double newTime = newtimeScanner.nextDouble();
+
+
+        String checkname = searchName;
+        Statement statement = conn.createStatement();
+        //HAD THIS - ResultSet rs = statement.executeUpdate("DELETE * FROM 'cubes' WHERE 'cube_solver' ='" + searchName + "'");
+        //wanted me to change it to an int//
+        int rs = statement.executeUpdate("DELETE * FROM 'cubes' WHERE 'cube_solver' ='" + searchName + "'");
+        //receiving an error that my SQL syntax is not correct.
+
+
+            String prepStatInsert = "INSERT INTO cubes VALUES ( ?, ? )";
+            PreparedStatement psInsert = conn.prepareStatement(prepStatInsert);
+            psInsert.setString(1, searchName);
+            psInsert.setDouble(2, newTime);
+            psInsert.executeUpdate();
+
+            psInsert.close();
+
+        }
+
+
+
 
     private static void displayTimes() throws SQLException {
 
