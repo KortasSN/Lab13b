@@ -4,10 +4,6 @@ import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.Scanner;
 
-//create database in mySQL shell
-//create table cubes (cube_solver varchar(50), time_seconds float);
-
-
 
 public class Main {
 
@@ -16,7 +12,7 @@ public class Main {
 
     static final String USER = "root";
     static final String PASSWORD = "itecitec";
-
+    static boolean exit = false;
 static Connection conn;
 static Statement statement;
 
@@ -25,7 +21,7 @@ static Statement statement;
         Class.forName(JDBC_DRIVER);
         conn = DriverManager.getConnection(DB_CONNECTION_URL, USER, PASSWORD);
         statement = conn.createStatement();
-
+        statement.executeUpdate("DROP TABLE cubes");
 //        String cube2Table = "CREATE TABLE IF NOT EXISTS cubes2 (cube_solver varchar(50), time_seconds double)";
 //        statement.executeUpdate(cube2Table);
 
@@ -46,67 +42,71 @@ static Statement statement;
 
         statement.execute("INSERT INTO cubes VALUES ('Mats Valk', 6.27)");
 
+        while (exit == false) {
+            System.out.println("1. Add Time");
+            System.out.println("2. Display Times");
+            System.out.println("3. Change Time");
+            System.out.println("4. Exit");
 
-        System.out.println("1. Add Time");
-        System.out.println("2. Display Times");
-        System.out.println("3. Change Time");
-        Scanner inputScanner = new Scanner(System.in);
-        int input = inputScanner.nextInt();
-        if (input == 1) {
-            addTime();}
-        if (input == 2) {
-            displayTimes();}
-        if (input == 3) {
-            changeTime();
-        }
-
-
-        try {
-            if (statement != null) statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            if (conn !=null) conn.close();
+            Scanner inputScanner = new Scanner(System.in);
+            int input = inputScanner.nextInt();
+            if (input == 1) {
+                addTime();
             }
-        catch (SQLException e)  {
-            e.printStackTrace();
+            if (input == 2) {
+                displayTimes();
+            }
+            if (input == 3) {
+                changeTime();
+                if (input == 4) {
+                    exit = true;
+                    if (exit = true) {
+                    }
+                }
+
+
+                try {
+                    if (statement != null) statement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (conn != null) conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                //TO DO add try/catch for all
+
+            }
         }
-        //TO DO add try/catch for all
-
     }
-
+        //changing time of an existing name in database//
     private static void changeTime() throws SQLException {
         System.out.println("Enter name:");
         Scanner searchScanner = new Scanner(System.in);
-        String searchName = searchScanner.nextLine();
+        String searchName = searchScanner.nextLine();       //getting name/time of user//
         System.out.println("Enter new time:");
         Scanner newtimeScanner = new Scanner(System.in);
         double newTime = newtimeScanner.nextDouble();
-
-
         String checkname = searchName;
         Statement statement = conn.createStatement();
-        //HAD THIS - ResultSet rs = statement.executeUpdate("DELETE * FROM 'cubes' WHERE 'cube_solver' ='" + searchName + "'");
-        //wanted me to change it to an int//
-        int rs = statement.executeUpdate("DELETE * FROM 'cubes' WHERE 'cube_solver' ='" + searchName + "'");
+
+                //updating the database with the current information//
+        statement.executeUpdate("UPDATE cubes SET time_seconds = "+newTime+" WHERE cube_solver ='"+searchName+"'");
         //receiving an error that my SQL syntax is not correct.
 
 
-            String prepStatInsert = "INSERT INTO cubes VALUES ( ?, ? )";
-            PreparedStatement psInsert = conn.prepareStatement(prepStatInsert);
-            psInsert.setString(1, searchName);
-            psInsert.setDouble(2, newTime);
-            psInsert.executeUpdate();
-
-            psInsert.close();
+//            String prepStatInsert = "INSERT INTO cubes VALUES ( ?, ? )";
+//            PreparedStatement psInsert = conn.prepareStatement(prepStatInsert);
+//            psInsert.setString(1, searchName);
+//            psInsert.setDouble(2, newTime);
+//            psInsert.executeUpdate();
+//
+//            psInsert.close();
 
         }
-
-
-
-
+        //display times in database//
     private static void displayTimes() throws SQLException {
 
         String tableOutput = ("SELECT * FROM cubes");  //REMOVE paranthesis
@@ -117,20 +117,20 @@ static Statement statement;
             double times = rs.getDouble("time_seconds");
             System.out.println("Solver " + name + " in " + times);
                     }
-        //statement.executeQuery(tableOutput);
-    }
 
+    }
+        //add a new time and person to the database//
     private static void addTime() throws Exception {
         Scanner nameOfSolverScanner = new Scanner(System.in);
         System.out.println("Enter your name: ");
-        String nameOfSolver = nameOfSolverScanner.next();
+        String nameOfSolver = nameOfSolverScanner.next();             //getting new person's name/time
         System.out.println("Enter your time: ");
         Scanner timeOfSolverScanner = new Scanner(System.in);
         Double timeOfSolver = timeOfSolverScanner.nextDouble();
 
         String prepStatInsert = "INSERT INTO cubes VALUES ( ?, ? )";
         PreparedStatement psInsert = conn.prepareStatement(prepStatInsert);
-        psInsert.setString(1, nameOfSolver);
+        psInsert.setString(1, nameOfSolver);                                    //writing person's name/time to database
         psInsert.setDouble(2, timeOfSolver);
         psInsert.executeUpdate();
 
