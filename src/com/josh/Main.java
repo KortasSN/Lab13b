@@ -1,4 +1,4 @@
-package com.josh;
+package com.company;
 
 import javax.xml.transform.Result;
 import java.sql.*;
@@ -13,8 +13,8 @@ public class Main {
     static final String USER = "root";
     static final String PASSWORD = "itecitec";
     static boolean exit = false;
-static Connection conn;
-static Statement statement;
+    static Connection conn;
+    static Statement statement;
 
     public static void main(String[] args) throws Exception {
 
@@ -58,12 +58,17 @@ static Statement statement;
             }
             if (input == 3) {
                 changeTime();
-                if (input == 4) {
-                    exit = true;
-                    if (exit = true) {
-                    }
-                }
+            }
 
+            if (input == 4) {
+                    exit = true;
+            }
+
+        }   //End of while loop
+
+
+            // User interaction with program has finished, done with DB connection
+            // Now close statement, prepared statement, result set, connections.
 
                 try {
                     if (statement != null) statement.close();
@@ -78,10 +83,8 @@ static Statement statement;
                 }
                 //TO DO add try/catch for all
 
-            }
-        }
     }
-        //changing time of an existing name in database//
+    //changing time of an existing name in database//
     private static void changeTime() throws SQLException {
         System.out.println("Enter name:");
         Scanner searchScanner = new Scanner(System.in);
@@ -92,8 +95,16 @@ static Statement statement;
         String checkname = searchName;
         Statement statement = conn.createStatement();
 
-                //updating the database with the current information//
-        statement.executeUpdate("UPDATE cubes SET time_seconds = "+newTime+" WHERE cube_solver ='"+searchName+"'");
+        //updating the database with the current information//
+        //statement.executeUpdate("UPDATE cubes SET time_seconds = "+newTime+" WHERE cube_solver ='"+searchName+"'");
+
+        PreparedStatement updateStatement = conn.prepareStatement("UPDATE cubes SET time_seconds = ? WHERE cube_solver = ?");
+        updateStatement.setDouble(1, newTime);
+        updateStatement.setString(2, searchName);
+        updateStatement.execute();
+        //statement.executeUpdate("UPDATE cubes SET time_seconds = "+newTime+" WHERE cube_solver ='"+searchName+"'");
+
+
         //receiving an error that my SQL syntax is not correct.
 
 
@@ -105,8 +116,8 @@ static Statement statement;
 //
 //            psInsert.close();
 
-        }
-        //display times in database//
+    }
+    //display times in database//
     private static void displayTimes() throws SQLException {
 
         String tableOutput = ("SELECT * FROM cubes");  //REMOVE paranthesis
@@ -116,10 +127,10 @@ static Statement statement;
             String name = rs.getString("cube_solver");
             double times = rs.getDouble("time_seconds");
             System.out.println("Solver " + name + " in " + times);
-                    }
+        }
 
     }
-        //add a new time and person to the database//
+    //add a new time and person to the database//
     private static void addTime() throws Exception {
         Scanner nameOfSolverScanner = new Scanner(System.in);
         System.out.println("Enter your name: ");
@@ -134,9 +145,8 @@ static Statement statement;
         psInsert.setDouble(2, timeOfSolver);
         psInsert.executeUpdate();
 
-        psInsert.close();
+        //psInsert.close();
 
     }
 }
-
 
